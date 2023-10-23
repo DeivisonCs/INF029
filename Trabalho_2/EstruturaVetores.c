@@ -36,7 +36,10 @@ Main_Vet Vetor[MAX];
 //         else if(nav_menu == 4)
 //             nav_menu = menu_control(nav_menu);
         
-//         else       
+//         else if(nav_menu == 5)
+//             nav_menu = menu_control(nav_menu);
+
+//         else        
 //             printf("Valor Invalido\n");
 //     }
 
@@ -47,6 +50,7 @@ Main_Vet Vetor[MAX];
 void inicializar(Main_Vet *p_Vet){
     for(int i=0; i<MAX; i++){
         p_Vet[i].tam = 0;
+        p_Vet[i].Qtd = 0;
         p_Vet[i].sub = NULL;
     }
 }
@@ -60,7 +64,8 @@ int menu(){
         printf("2 - Excluir\n");
         printf("3 - Listar\n");
         printf("4 - Criar Estrutura\n");
-        printf("5 - Aumentar Estrutura\n\n");
+        printf("5 - GetDados\n");
+        printf("6 - Aumentar Estrutura\n\n");
 
         printf("--> ");
 
@@ -76,9 +81,7 @@ int menu_control(int option){
     switch(option)
     {
     // SAIR
-        case 0:
-            return 0;
-        break;
+        case 0: return 0; break;
 
     // INSERIR NA ESTRUTURA AUXILIAR 
         case 1:
@@ -106,10 +109,9 @@ int menu_control(int option){
                         return SUCESSO;
                 }
             }
-            else  if(ctrl == SUCESSO)
-                return SUCESSO;
-            else
-                return EXIT_FAILURE;
+
+            else  if(ctrl == SUCESSO) return SUCESSO;
+            else return EXIT_FAILURE;
         break;
 
     // EXCLUIR ELEMENTO
@@ -136,10 +138,8 @@ int menu_control(int option){
             else
                 ctrl = excluirNumeroDoFinaldaEstrutura(posicao);
 
-            if(ctrl == SUCESSO)
-                return SUCESSO;
-            else
-                return EXIT_FAILURE;
+            if(ctrl == SUCESSO) return SUCESSO;
+            else return EXIT_FAILURE;
             
         break;
 
@@ -166,11 +166,27 @@ int menu_control(int option){
 
             ctrl = criarEstruturaAuxiliar(posicao, valor);
 
-            if(ctrl == SUCESSO)
+            if(ctrl == SUCESSO) return SUCESSO;
+            else return EXIT_FAILURE;
+        break;
+    
+    // GETDADOS
+        case 5:
+            int dados[100];  
+            printf("----------- GetDados -----------\n\n");
+            printf("Posicao: ");
+            scanf("%d", &posicao);
+            getchar();
+
+            ctrl = getDadosOrdenadosDeTodasEstruturasAuxiliares(dados);
+
+            if(ctrl == SUCESSO){
+                // TESTE
+                // for(ctrl=0; ctrl<Vetor[posicao-1].Qtd; ctrl++)
+                //     printf("%d ", dados[ctrl]);
                 return SUCESSO;
-            
-            else
-                return EXIT_FAILURE;
+            }
+            else return EXIT_FAILURE;
         break;
     }
 }
@@ -269,6 +285,7 @@ int inserirNumeroEmEstrutura(int posicao, int valor){
             else{
                 // printf("Numero Inserido\n");
                 node->num = valor;
+                Vetor[i].Qtd++;
                 node->status = ACTIVE;
                 return SUCESSO;
             }
@@ -303,6 +320,7 @@ int excluirNumeroDoFinaldaEstrutura(int posicao){
         }
         else{
             node->status = INACTIVE;
+            Vetor[i].Qtd--;
             // printf("Sucesso\n");
             return SUCESSO;
         }
@@ -350,6 +368,7 @@ int excluirNumeroEspecificoDeEstrutura(int posicao, int valor){
 
         else{
             node->status = INACTIVE;
+            Vetor[i].Qtd--;
             // printf("Sucesso\n");
             return SUCESSO;
         }
@@ -361,11 +380,11 @@ int getDadosEstruturaAuxiliar(int posicao, int vetorAux[]){
     int j;
 
     if(posicao > 10 || posicao < 1){
-        printf("POSICAO_INVALIDA\n");
+        // printf("POSICAO_INVALIDA\n");
         return POSICAO_INVALIDA;
     }    
     else if(Vetor[i].sub == NULL){
-        printf("SEM_ESTRUTURA_AUXILIAR\n");
+        // printf("SEM_ESTRUTURA_AUXILIAR\n");
         return SEM_ESTRUTURA_AUXILIAR;
     }
     else
@@ -383,12 +402,83 @@ int getDadosEstruturaAuxiliar(int posicao, int vetorAux[]){
     }
 }
 
-//TO DO
-int getDadosOrdenadosEstruturaAuxiliar(int posicao, int vetorAux[]){}
-//TO DO
-int getDadosDeTodasEstruturasAuxiliares(int vetorAux[]){}
-//TO DO
-int getDadosOrdenadosDeTodasEstruturasAuxiliares(int vetorAux[]){}
+int getDadosOrdenadosEstruturaAuxiliar(int posicao, int vetorAux[]){
+    int ctrl;
+
+    ctrl = getDadosEstruturaAuxiliar(posicao, vetorAux);
+
+    if(ctrl == POSICAO_INVALIDA){
+        // printf("POSICAO_INVALIDA\n");
+        return POSICAO_INVALIDA;
+    }
+    else if(ctrl == SEM_ESTRUTURA_AUXILIAR){
+        // printf("SEM_ESTRUTURA_AUXILIAR\n");
+        return SEM_ESTRUTURA_AUXILIAR;
+    }
+    else if(ctrl == SUCESSO)
+    {
+        int menor, aux;
+        for(int i=0; i < Vetor[posicao-1].Qtd-1; i++)
+        {
+            menor = i;
+            for(int j=i+1; j < Vetor[posicao-1].Qtd; j++)
+                if(vetorAux[j] < vetorAux[menor])
+                    menor = j;
+            
+            if(menor != i){
+                aux = vetorAux[i];
+                vetorAux[i] = vetorAux[menor];
+                vetorAux[menor] = aux;
+            }
+        }
+        return SUCESSO;
+    }
+}
+
+int getDadosDeTodasEstruturasAuxiliares(int vetorAux[]){
+    int i, ctrl, j;
+
+    for(i=0, j=0; i<MAX; i++)
+    {
+        ctrl = getDadosEstruturaAuxiliar(i+1, &vetorAux[j]);
+        j += Vetor[i].Qtd;
+    }
+
+    // for(i=0; i<j; i++)
+    //     printf("%d ", vetorAux[i]);
+    // printf("\n");
+
+    return SUCESSO;
+}
+
+int getDadosOrdenadosDeTodasEstruturasAuxiliares(int vetorAux[]){
+    int i=0, qtd, menor, j, aux;
+
+    i = getDadosDeTodasEstruturasAuxiliares(vetorAux);
+
+    for(i=0, qtd=0; i<MAX; i++)
+        qtd += Vetor[i].Qtd;  
+
+    for(i=0; i<qtd-1; i++){
+        menor = i;
+
+        for(j=i+1; j<qtd; j++)
+            if(vetorAux[j] < vetorAux[menor])
+                menor = j;
+
+        if(menor != i){
+            aux = vetorAux[i];
+            vetorAux[i] = vetorAux[menor];
+            vetorAux[menor] = aux;
+        }
+    }
+
+    // for(i=0; i<qtd; i++)
+    //     printf("%d ", vetorAux[i]);
+    // printf("\n");
+
+    return SUCESSO;
+}
 //TO DO
 int modificarTamanhoEstruturaAuxiliar(int posicao, int novoTamanho){}
 //TO DO

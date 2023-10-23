@@ -17,6 +17,7 @@ typedef struct Sub_Vet{
 
 typedef struct Main_Vet{
     int tam;
+    int Qtd;
     No *sub;
 }Main_Vet;
 
