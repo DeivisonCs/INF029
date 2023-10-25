@@ -11,39 +11,20 @@ Main_Vet Vetor[MAX];
 //     int nav_menu = -1;
 //     int sair = 0;
 
-//     printf("Here\n\n");
-
 //     while(!sair){
 //         nav_menu = menu();
 
 //         if(nav_menu == 0)
 //             break;
 
-//         else if(nav_menu == 1)
-//         {
-//             nav_menu = menu_control(nav_menu);
-
-//             if(nav_menu != SUCESSO)
-//                 printf("Numero nao inserido\n");
-//         }
-
-//         else if(nav_menu == 2)
-//             nav_menu = menu_control(nav_menu);
-
-//         else if(nav_menu == 3)
-//             nav_menu = menu_control(nav_menu);
-        
-//         else if(nav_menu == 4)
-//             nav_menu = menu_control(nav_menu);
-        
-//         else if(nav_menu == 5)
-//             nav_menu = menu_control(nav_menu);
-
-//         else        
+//         else if(nav_menu > 6)
 //             printf("Valor Invalido\n");
+        
+//         else
+//             nav_menu = menu_control(nav_menu);
 //     }
 
-//    free_all();
+//     free_all();
 //     return EXIT_SUCCESS;
 // }
 
@@ -188,6 +169,19 @@ int menu_control(int option){
             }
             else return EXIT_FAILURE;
         break;
+
+        case 6:
+            printf("------- Aumentar Estrutura -----\n\n");
+            printf("Posicao: ");
+            scanf("%d", &posicao);
+            getchar();
+
+            printf("Novo tamanho: ");
+            scanf("%d", &valor);
+            getchar();
+
+            ctrl = modificarTamanhoEstruturaAuxiliar(posicao, valor);
+        break;
     }
 }
 
@@ -206,11 +200,6 @@ int criarEstruturaAuxiliar(int posicao, int tamanho){
         return JA_TEM_ESTRUTURA_AUXILIAR;
     }
 
-    else if(Vetor[i].tam + tamanho > SUB_MAX){
-        // printf("SEM_ESPACO_DE_MEMORIA\n");
-        return SEM_ESPACO_DE_MEMORIA;
-    }
-
     else if(tamanho < 1){
         // printf("TAMANHO_INVALIDO (Estrutura)\n");
         return TAMANHO_INVALIDO;
@@ -218,8 +207,12 @@ int criarEstruturaAuxiliar(int posicao, int tamanho){
 
     else{
 
-        for(int j=0; j<tamanho; j++){
+        for(int j=0; j<tamanho; j++)
+        {
             No *node = malloc(sizeof(No));
+
+            if(node == NULL)
+                return SEM_ESPACO_DE_MEMORIA;
 
             node->num = 0;
             node->status = INACTIVE;
@@ -436,25 +429,33 @@ int getDadosOrdenadosEstruturaAuxiliar(int posicao, int vetorAux[]){
 }
 
 int getDadosDeTodasEstruturasAuxiliares(int vetorAux[]){
-    int i, ctrl, j;
+    int i, ctrl, j, qtd_null;
 
-    for(i=0, j=0; i<MAX; i++)
+    for(i=0, j=0, qtd_null=0; i<MAX; i++)
     {
-        ctrl = getDadosEstruturaAuxiliar(i+1, &vetorAux[j]);
-        j += Vetor[i].Qtd;
+        if(Vetor[i].Qtd == 0)
+            qtd_null++;
+
+        else{
+            ctrl = getDadosEstruturaAuxiliar(i+1, &vetorAux[j]);
+            j += Vetor[i].Qtd;
+        }
     }
 
     // for(i=0; i<j; i++)
     //     printf("%d ", vetorAux[i]);
     // printf("\n");
-
-    return SUCESSO;
+    if(qtd_null == MAX) return TODAS_ESTRUTURAS_AUXILIARES_VAZIAS;
+    else return SUCESSO;
 }
 
 int getDadosOrdenadosDeTodasEstruturasAuxiliares(int vetorAux[]){
     int i=0, qtd, menor, j, aux;
 
     i = getDadosDeTodasEstruturasAuxiliares(vetorAux);
+
+    if(i == TODAS_ESTRUTURAS_AUXILIARES_VAZIAS)
+        return TODAS_ESTRUTURAS_AUXILIARES_VAZIAS;
 
     for(i=0, qtd=0; i<MAX; i++)
         qtd += Vetor[i].Qtd;  
@@ -479,10 +480,103 @@ int getDadosOrdenadosDeTodasEstruturasAuxiliares(int vetorAux[]){
 
     return SUCESSO;
 }
-//TO DO
-int modificarTamanhoEstruturaAuxiliar(int posicao, int novoTamanho){}
-//TO DO
-int getQuantidadeElementosEstruturaAuxiliar(int posicao){}
+
+int modificarTamanhoEstruturaAuxiliar(int posicao, int novoTamanho){
+    int i = posicao-1;
+
+    if(posicao > 10 || posicao < 1){
+        // printf("POSICAO_INVALIDA\n");
+        return POSICAO_INVALIDA;
+    }
+    else if(Vetor[i].sub == NULL){
+        // printf("SEM_ESTRUTURA_AUXILIAR\n");
+        return SEM_ESTRUTURA_AUXILIAR;
+    }
+    else if(Vetor[i].tam + novoTamanho <= 0){
+        // printf("NOVO_TAMANHO_INVALIDO\n");
+        return NOVO_TAMANHO_INVALIDO;
+    }
+
+    else if(Vetor[i].tam + novoTamanho < Vetor[i].tam)  //CASO O NOVO TAMANHO SEJA MENOR
+    {
+        No *node = Vetor[i].sub;
+
+        int j=0;
+        while(j < 1-(Vetor[i].tam + novoTamanho)){    //ACHA O PONTO A SER EXCLUIDO
+            node = node->prox;
+            j++;
+        }
+        
+        No *aux = node->prox;
+        node->prox = NULL;
+
+        while(aux != NULL){
+            No *remove = aux;
+            aux = aux->prox;
+            free(remove);
+        }
+
+        Vetor[i].tam += novoTamanho;
+    }
+
+    else
+    {
+        No *node = Vetor[i].sub;
+
+        while(node->prox != NULL)
+            node = node->prox;
+
+        for(int j=0; j<novoTamanho; j++)
+        {
+            No *new_Node = malloc(sizeof(No));
+
+            if(new_Node == NULL){
+                printf("SEM_ESPACO_DE_MEMORIA\n");
+                return SEM_ESPACO_DE_MEMORIA;
+            }
+            else{
+                node->prox = new_Node;
+                node = node->prox;
+                new_Node->prox = NULL;
+                new_Node->status = INACTIVE;
+                Vetor[i].tam++;
+            }
+        }
+    }
+
+    return SUCESSO;
+}
+
+int getQuantidadeElementosEstruturaAuxiliar(int posicao){
+    int i = posicao-1;
+
+    if(posicao > 10 || posicao < 1)
+        return POSICAO_INVALIDA;
+
+    else if(Vetor[i].sub == NULL)
+        return SEM_ESTRUTURA_AUXILIAR;
+
+    else if(Vetor[i].Qtd == 0)
+        return ESTRUTURA_AUXILIAR_VAZIA;
+
+    else
+    {
+        No *node = Vetor[i].sub;
+
+        int qtd=0;
+        while(node != NULL)
+        {
+            if(node->status == ACTIVE)
+                qtd++;
+
+            // printf("node: %d\n", node->num);
+            node = node->prox;
+        }
+        // printf("qtd %d\n", qtd);
+        return qtd;
+    }
+}
+
 //TO DO
 No *montarListaEncadeadaComCabecote(){}
 
@@ -531,4 +625,21 @@ void free_all(){
 
     printf("Espaço Liberado\n");
     printf("Programa Finalizado Com Sucesso\n");
+}
+
+void free_especific(int posicao){
+    int i;
+
+    if(Vetor[i].sub != NULL)
+    {
+        No *aux = Vetor[i].sub;
+
+        while(aux != NULL){
+            // printf("Removing\n");
+            No *remove = aux;
+            aux = aux->prox;
+            free(remove);
+        }
+    }
+    printf("Espaço Liberado\n");
 }

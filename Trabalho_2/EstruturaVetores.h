@@ -16,14 +16,16 @@ typedef struct Sub_Vet{
 }No;
 
 typedef struct Main_Vet{
-    int tam;
-    int Qtd;
+    int tam;    //Tamanho total da sub-lista
+    int Qtd;    //Qtd de elementos válidos
     No *sub;
 }Main_Vet;
 
 int menu();
 
 void free_all();
+
+void free_especific(int posicao);
 
 void show_selected(int x);
 
