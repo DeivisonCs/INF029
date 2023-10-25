@@ -10,6 +10,7 @@ Main_Vet Vetor[MAX];
 // int main(){
 //     int nav_menu = -1;
 //     int sair = 0;
+    // inicializar();
 
 //     while(!sair){
 //         nav_menu = menu();
@@ -24,15 +25,15 @@ Main_Vet Vetor[MAX];
 //             nav_menu = menu_control(nav_menu);
 //     }
 
-//     free_all();
+//     finalizar();
 //     return EXIT_SUCCESS;
 // }
 
-void inicializar(Main_Vet *p_Vet){
+void inicializar(){
     for(int i=0; i<MAX; i++){
-        p_Vet[i].tam = 0;
-        p_Vet[i].Qtd = 0;
-        p_Vet[i].sub = NULL;
+        Vetor[i].tam = 0;
+        Vetor[i].Qtd = 0;
+        Vetor[i].sub = NULL;
     }
 }
 
@@ -190,20 +191,14 @@ int criarEstruturaAuxiliar(int posicao, int tamanho){
 
     // printf("\tCriar Estrutura Auxiliar\n");
 
-    if(posicao > 10 || posicao <= 0){
-        // printf("Posicao Invalida (estrutura)\n");
+    if(valid_position(posicao) == POSICAO_INVALIDA) 
         return POSICAO_INVALIDA;
-    }
     
-    else if(Vetor[i].sub != NULL){
-        // printf("Ja Tem Estrutura Auxiliar\n");
+    else if(Vetor[i].sub != NULL)
         return JA_TEM_ESTRUTURA_AUXILIAR;
-    }
 
-    else if(tamanho < 1){
-        // printf("TAMANHO_INVALIDO (Estrutura)\n");
+    else if(tamanho < 1)
         return TAMANHO_INVALIDO;
-    }
 
     else{
 
@@ -243,62 +238,50 @@ int inserirNumeroEmEstrutura(int posicao, int valor){
     int i = posicao-1;
 
     // printf("\tFuncao Inserir\n");
-    if(posicao > 10 || posicao <= 0){    //Posição Inválida
-        // printf("Posicao Invalida (inserir)\n");
+    if(valid_position(posicao) == POSICAO_INVALIDA) 
         return POSICAO_INVALIDA;
-    }
-    else{
 
-        if(Vetor[i].sub == NULL)     //Sem Sub-Lista
-        {
-            // printf("Sem estrutura auxiliar\n");   
-            return SEM_ESTRUTURA_AUXILIAR;
+    else if(Vetor[i].sub == NULL)
+        return SEM_ESTRUTURA_AUXILIAR;
+          
+    else
+    {
+    // Verifica se tem espaço livre
+        No *node = Vetor[i].sub;
+
+        int j=0;
+        while(j < Vetor[i].tam && node->status != INACTIVE){
+            if(node->prox != NULL)
+                node = node->prox;
+            j++;
         }
+
+    //Caso não tiver espaço
+        if(j == Vetor[i].tam && node->status == ACTIVE)
+            return SEM_ESPACO;
         
-        else
-        {
-        // Verifica se tem espaço livre
-            No *node = Vetor[i].sub;
-            int j=0;
-            while(j < Vetor[i].tam && node->status != INACTIVE){
-                
-                if(node->prox != NULL)
-                    node = node->prox;
-                // printf("j: %d\n", j);
-                j++;
-            }
 
-        //Caso não tiver espaço
-            if(j == Vetor[i].tam && node->status == ACTIVE){
-                // printf("Sem Espaco\n");
-                return SEM_ESPACO;
-            }
-
-        //Caso haja espaço
-            else{
-                // printf("Numero Inserido\n");
-                node->num = valor;
-                Vetor[i].Qtd++;
-                node->status = ACTIVE;
-                return SUCESSO;
-            }
+    //Caso haja espaço
+        else{
+            // printf("Numero Inserido\n");
+            node->num = valor;
+            Vetor[i].Qtd++;
+            node->status = ACTIVE;
+            return SUCESSO;
         }
     }
+    
     // printf("\n");
 }
 
 int excluirNumeroDoFinaldaEstrutura(int posicao){
     int i = posicao-1;
 
-    if(posicao > 10 || posicao < 1){
-        // printf("POSICAO_INVALIDA\n");
+    if(valid_position(posicao) == POSICAO_INVALIDA) 
         return POSICAO_INVALIDA;
-    }
 
-    else if(Vetor[i].sub == NULL){
-        // printf("SEM_ESTRUTURA_AUXILIAR\n");
+    else if(Vetor[i].sub == NULL)
         return SEM_ESTRUTURA_AUXILIAR;
-    }
 
     else
     {
@@ -307,14 +290,12 @@ int excluirNumeroDoFinaldaEstrutura(int posicao){
         while(node->prox != NULL && node->prox->status == ACTIVE)
             node = node->prox;
 
-        if(node->status == INACTIVE && (node->prox == NULL || node->prox->status == INACTIVE)){
-            // printf("ESTRUTURA_AUXILIAR_VAZIA\n");
+        if(node->status == INACTIVE && (node->prox == NULL || node->prox->status == INACTIVE))
             return ESTRUTURA_AUXILIAR_VAZIA;
-        }
+        
         else{
             node->status = INACTIVE;
             Vetor[i].Qtd--;
-            // printf("Sucesso\n");
             return SUCESSO;
         }
     }
@@ -324,15 +305,11 @@ int excluirNumeroEspecificoDeEstrutura(int posicao, int valor){
     int i = posicao-1;
     int ctrl = 0;
 
-    if(posicao > 10 || posicao < 1){
-        // printf("POSICAO_INVALIDA\n");
+    if(valid_position(posicao) == POSICAO_INVALIDA) 
         return POSICAO_INVALIDA;
-    }
 
-    else if(Vetor[i].sub == NULL){
-        // printf("SEM_ESTRUTURA_AUXILIAR\n");
+    else if(Vetor[i].sub == NULL)
         return SEM_ESTRUTURA_AUXILIAR;
-    }
 
     else
     {
@@ -349,15 +326,13 @@ int excluirNumeroEspecificoDeEstrutura(int posicao, int valor){
             node = node->prox;
         }
 
-        if(ctrl == 0){
-            // printf("ESTRUTURA_AUXILIAR_VAZIA\n");
+        if(ctrl == 0)
             return ESTRUTURA_AUXILIAR_VAZIA;
-        }
+        
 
-        else if(node == NULL){
-            // printf("NUMERO_INEXISTENTE\n");
+        else if(node == NULL)
             return NUMERO_INEXISTENTE;
-        }
+        
 
         else{
             node->status = INACTIVE;
@@ -372,14 +347,12 @@ int getDadosEstruturaAuxiliar(int posicao, int vetorAux[]){
     int i = posicao-1;
     int j;
 
-    if(posicao > 10 || posicao < 1){
-        // printf("POSICAO_INVALIDA\n");
+    if(valid_position(posicao) == POSICAO_INVALIDA) 
         return POSICAO_INVALIDA;
-    }    
-    else if(Vetor[i].sub == NULL){
-        // printf("SEM_ESTRUTURA_AUXILIAR\n");
+
+    else if(Vetor[i].sub == NULL)
         return SEM_ESTRUTURA_AUXILIAR;
-    }
+    
     else
     {
         No *node = Vetor[i].sub;
@@ -400,14 +373,12 @@ int getDadosOrdenadosEstruturaAuxiliar(int posicao, int vetorAux[]){
 
     ctrl = getDadosEstruturaAuxiliar(posicao, vetorAux);
 
-    if(ctrl == POSICAO_INVALIDA){
-        // printf("POSICAO_INVALIDA\n");
+    if(ctrl == POSICAO_INVALIDA)
         return POSICAO_INVALIDA;
-    }
-    else if(ctrl == SEM_ESTRUTURA_AUXILIAR){
-        // printf("SEM_ESTRUTURA_AUXILIAR\n");
+    
+    else if(ctrl == SEM_ESTRUTURA_AUXILIAR)
         return SEM_ESTRUTURA_AUXILIAR;
-    }
+    
     else if(ctrl == SUCESSO)
     {
         int menor, aux;
@@ -442,9 +413,6 @@ int getDadosDeTodasEstruturasAuxiliares(int vetorAux[]){
         }
     }
 
-    // for(i=0; i<j; i++)
-    //     printf("%d ", vetorAux[i]);
-    // printf("\n");
     if(qtd_null == MAX) return TODAS_ESTRUTURAS_AUXILIARES_VAZIAS;
     else return SUCESSO;
 }
@@ -474,30 +442,22 @@ int getDadosOrdenadosDeTodasEstruturasAuxiliares(int vetorAux[]){
         }
     }
 
-    // for(i=0; i<qtd; i++)
-    //     printf("%d ", vetorAux[i]);
-    // printf("\n");
-
     return SUCESSO;
 }
 
 int modificarTamanhoEstruturaAuxiliar(int posicao, int novoTamanho){
     int i = posicao-1;
 
-    if(posicao > 10 || posicao < 1){
-        // printf("POSICAO_INVALIDA\n");
+    if(valid_position(posicao) == POSICAO_INVALIDA) 
         return POSICAO_INVALIDA;
-    }
-    else if(Vetor[i].sub == NULL){
-        // printf("SEM_ESTRUTURA_AUXILIAR\n");
-        return SEM_ESTRUTURA_AUXILIAR;
-    }
-    else if(Vetor[i].tam + novoTamanho <= 0){
-        // printf("NOVO_TAMANHO_INVALIDO\n");
-        return NOVO_TAMANHO_INVALIDO;
-    }
 
-    else if(Vetor[i].tam + novoTamanho < Vetor[i].tam)  //CASO O NOVO TAMANHO SEJA MENOR
+    else if(Vetor[i].sub == NULL)
+        return SEM_ESTRUTURA_AUXILIAR;
+    
+    else if(Vetor[i].tam + novoTamanho <= 0)
+        return NOVO_TAMANHO_INVALIDO;
+    
+    else if(Vetor[i].tam + novoTamanho < Vetor[i].tam)  //CASO O NOVO TAMANHO DECREMENTE A SUB-LISTA
     {
         No *node = Vetor[i].sub;
 
@@ -519,7 +479,7 @@ int modificarTamanhoEstruturaAuxiliar(int posicao, int novoTamanho){
         Vetor[i].tam += novoTamanho;
     }
 
-    else
+    else    //CASO NOVO INCREMENTE A SUB-LISTA
     {
         No *node = Vetor[i].sub;
 
@@ -550,7 +510,7 @@ int modificarTamanhoEstruturaAuxiliar(int posicao, int novoTamanho){
 int getQuantidadeElementosEstruturaAuxiliar(int posicao){
     int i = posicao-1;
 
-    if(posicao > 10 || posicao < 1)
+    if(valid_position(posicao) == POSICAO_INVALIDA) 
         return POSICAO_INVALIDA;
 
     else if(Vetor[i].sub == NULL)
@@ -569,10 +529,8 @@ int getQuantidadeElementosEstruturaAuxiliar(int posicao){
             if(node->status == ACTIVE)
                 qtd++;
 
-            // printf("node: %d\n", node->num);
             node = node->prox;
         }
-        // printf("qtd %d\n", qtd);
         return qtd;
     }
 }
@@ -603,7 +561,7 @@ void show_selected(int x){
     
 }
 
-void free_all(){
+void finalizar(){
     int i = 0;
 
     while(i < MAX)
@@ -642,4 +600,9 @@ void free_especific(int posicao){
         }
     }
     printf("Espaço Liberado\n");
+}
+
+int valid_position(int posicao){
+    if(posicao > 10 || posicao < 1) return POSICAO_INVALIDA;
+    else  return SUCESSO;
 }

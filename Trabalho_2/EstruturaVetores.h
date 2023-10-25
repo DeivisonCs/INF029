@@ -23,13 +23,15 @@ typedef struct Main_Vet{
 
 int menu();
 
-void free_all();
+void finalizar();
 
-void free_especific(int posicao);
+void inicializar();
 
 void show_selected(int x);
 
-void inicializar(Main_Vet *p_Vet);
+int valid_position(int posicao);
+
+void free_especific(int posicao);
 
 int menu_control(int option);
 

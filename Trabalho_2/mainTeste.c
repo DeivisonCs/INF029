@@ -20,7 +20,7 @@ void testeListaEncadeada();
 
 int main()
 {
-    // inicializar();
+    inicializar();
     testeInserirSemNada();
     testeCriarEstrutura();
     testeInserirComEstrutura();
@@ -30,8 +30,8 @@ int main()
     testeRetornarTodosNumeros();
     testeMudarTamanhoEstrutura();
     // testeListaEncadeada();
-    // finalizar();
-    free_all();
+    finalizar();
+    // free_all();
 }
 int ligado = 1;
 void show_log(char *str)
