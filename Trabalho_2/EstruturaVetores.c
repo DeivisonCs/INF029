@@ -567,10 +567,6 @@ void getDadosListaEncadeadaComCabecote(No *inicio, int vetorAux[]){
     while(node != NULL){
         vetorAux[i] = node->num;
         i++;
-        // if(node->status == ACTIVE){
-        //     vetorAux[i] = node->num;
-        //     i++;
-        // }
         node = node->prox;
     }
 }
@@ -605,9 +601,7 @@ void show_selected(int x){
         
         node = node->prox;   
     }
-
     printf("\n");
-    
 }
 
 void finalizar(){
@@ -641,7 +635,6 @@ void free_especific(int posicao){
         No *aux = Vetor[i].sub;
 
         while(aux != NULL){
-            // printf("Removing\n");
             No *remove = aux;
             aux = aux->prox;
             free(remove);
