@@ -189,8 +189,6 @@ int menu_control(int option){
 int criarEstruturaAuxiliar(int posicao, int tamanho){
     int i = posicao-1;
 
-    // printf("\tCriar Estrutura Auxiliar\n");
-
     if(valid_position(posicao) == POSICAO_INVALIDA) 
         return POSICAO_INVALIDA;
     
@@ -233,7 +231,6 @@ int criarEstruturaAuxiliar(int posicao, int tamanho){
 int inserirNumeroEmEstrutura(int posicao, int valor){
     int i = posicao-1;
 
-    // printf("\tFuncao Inserir\n");
     if(valid_position(posicao) == POSICAO_INVALIDA) 
         return POSICAO_INVALIDA;
 
@@ -259,15 +256,12 @@ int inserirNumeroEmEstrutura(int posicao, int valor){
 
     //Caso haja espaço
         else{
-            // printf("Numero Inserido\n");
             node->num = valor;
             Vetor[i].Qtd++;
             node->status = ACTIVE;
             return SUCESSO;
         }
     }
-    
-    // printf("\n");
 }
 
 int excluirNumeroDoFinaldaEstrutura(int posicao){
@@ -328,12 +322,10 @@ int excluirNumeroEspecificoDeEstrutura(int posicao, int valor){
 
         else if(node == NULL)
             return NUMERO_INEXISTENTE;
-        
 
         else{
             node->status = INACTIVE;
             Vetor[i].Qtd--;
-            // printf("Sucesso\n");
             return SUCESSO;
         }
     }
@@ -535,32 +527,30 @@ No *montarListaEncadeadaComCabecote(){
     int qtd_Null=0;
     int get_start=0;
     No *start = malloc(sizeof(No)); start->prox = NULL;
-    No *list = NULL;
 
-    // printf("Here 1\n");
     for(int i=0; i<MAX; i++)
     {
-        // printf("Here 2\n");
         if(Vetor[i].sub != NULL)
         {
-            // printf("Here 3\n");
             No *aux = Vetor[i].sub;
             while(aux != NULL)
             {
-                // printf("Here 4 i: %d\n", i);
                 if(aux->status == ACTIVE)
                 {
-                    // printf("Here 5 valor; %d\n", aux->num);
-                    if(start->prox == NULL){
-                        // printf("Here 6\n");
-                        list = aux;
-                        start->prox = list;
-                    }
+                    No *new_Node = malloc(sizeof(No));
+                    new_Node->num = aux->num;
+
+                    if(start->prox == NULL)
+                        start->prox = new_Node;
+
                     else{
-                        // printf("Here 7\n");
-                        list->prox = aux;
-                        list = list->prox;
+                        No *get_End = start->prox;
+                        while(get_End->prox != NULL)
+                            get_End = get_End->prox;
+
+                        get_End->prox = new_Node;
                     }
+                    new_Node->prox = NULL;
                 }
                 aux = aux->prox;
             }
@@ -570,26 +560,31 @@ No *montarListaEncadeadaComCabecote(){
     return start;
 }
 
-//TO DO
 void getDadosListaEncadeadaComCabecote(No *inicio, int vetorAux[]){
     int i=0;
-
     No *node = inicio->prox;
+
     while(node != NULL){
         vetorAux[i] = node->num;
-        node = node->prox;
         i++;
+        // if(node->status == ACTIVE){
+        //     vetorAux[i] = node->num;
+        //     i++;
+        // }
+        node = node->prox;
     }
 }
 
 void destruirListaEncadeadaComCabecote(No **inicio){
 
     No *node = *inicio;
-    node = node->prox;
 
     while(node != NULL){
-        
+        No *remove = node->prox;
+        free(node);
+        node = remove;
     }
+    *inicio = NULL;
 }
 
 void show_selected(int x){
@@ -625,7 +620,6 @@ void finalizar(){
             No *aux = Vetor[i].sub;
 
             while(aux != NULL){
-                // printf("Removing\n");
                 No *remove = aux;
                 aux = aux->prox;
                 free(remove);

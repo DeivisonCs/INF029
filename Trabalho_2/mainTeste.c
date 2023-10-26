@@ -29,8 +29,8 @@ int main()
     testeListar();
     testeRetornarTodosNumeros();
     testeMudarTamanhoEstrutura();
-    testeListaEncadeada();
-    finalizar();
+    testeListaEncadeada();  // Libera a lista encadeada criada com elementos ativos das sub-listas 
+    finalizar();    // Libera as sub-listas
 }
 int ligado = 1;
 void show_log(char *str)
@@ -267,15 +267,15 @@ void testeListaEncadeada()
     No *inicio = montarListaEncadeadaComCabecote();
     getDadosListaEncadeadaComCabecote(inicio, vet);
 
-    printf("%d\n", vet[0] == 3);
-    printf("%d\n", vet[1] == 4);
-    printf("%d\n", vet[2] == -2);
-    printf("%d\n", vet[3] == 6);
-    printf("%d\n", vet[4] == 1);
-    printf("%d\n", vet[5] == 34);
-    printf("%d\n", vet[6] == 12);
-    printf("%d\n", vet[7] == 6);
-    printf("%d\n", vet[8] == 27);
+    printf("%d ", vet[0] == 3);
+    printf("%d ", vet[1] == 4);
+    printf("%d ", vet[2] == -2);
+    printf("%d ", vet[3] == 6);
+    printf("%d ", vet[4] == 1);
+    printf("%d ", vet[5] == 34);
+    printf("%d ", vet[6] == 12);
+    printf("%d ", vet[7] == 6);
+    printf("%d ", vet[8] == 27);
     printf("%d\n", vet[9] == -6);
 
     destruirListaEncadeadaComCabecote(&inicio);
