@@ -56,3 +56,7 @@ int modificarTamanhoEstruturaAuxiliar(int posicao, int novoTamanho);
 int getQuantidadeElementosEstruturaAuxiliar(int posicao);
 
 No *montarListaEncadeadaComCabecote();
+
+void getDadosListaEncadeadaComCabecote(No *inicio, int vetorAux[]);
+
+void destruirListaEncadeadaComCabecote(No **inicio);

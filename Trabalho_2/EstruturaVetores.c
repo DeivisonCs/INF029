@@ -212,12 +212,10 @@ int criarEstruturaAuxiliar(int posicao, int tamanho){
             node->num = 0;
             node->status = INACTIVE;
             
-            if(Vetor[i].sub == NULL){
-                // printf("Sub-lista Posicao %d\n", j);
+            if(Vetor[i].sub == NULL)
                 Vetor[i].sub = node;
-            }
+            
             else{
-                // printf("Sub-lista Posicao %d\n", j);
                 No *aux = Vetor[i].sub;
                 while(aux->prox != NULL)
                     aux = aux->prox;
@@ -227,9 +225,7 @@ int criarEstruturaAuxiliar(int posicao, int tamanho){
 
             node->prox = NULL;
             Vetor[i].tam++;
-            // printf("Vetor Tamanho: %d\n", Vetor[i].tam);
         } 
-        // printf("\n");
         return SUCESSO;
     }
 }
@@ -535,8 +531,66 @@ int getQuantidadeElementosEstruturaAuxiliar(int posicao){
     }
 }
 
+No *montarListaEncadeadaComCabecote(){
+    int qtd_Null=0;
+    int get_start=0;
+    No *start = malloc(sizeof(No)); start->prox = NULL;
+    No *list = NULL;
+
+    // printf("Here 1\n");
+    for(int i=0; i<MAX; i++)
+    {
+        // printf("Here 2\n");
+        if(Vetor[i].sub != NULL)
+        {
+            // printf("Here 3\n");
+            No *aux = Vetor[i].sub;
+            while(aux != NULL)
+            {
+                // printf("Here 4 i: %d\n", i);
+                if(aux->status == ACTIVE)
+                {
+                    // printf("Here 5 valor; %d\n", aux->num);
+                    if(start->prox == NULL){
+                        // printf("Here 6\n");
+                        list = aux;
+                        start->prox = list;
+                    }
+                    else{
+                        // printf("Here 7\n");
+                        list->prox = aux;
+                        list = list->prox;
+                    }
+                }
+                aux = aux->prox;
+            }
+        }
+    }
+
+    return start;
+}
+
 //TO DO
-No *montarListaEncadeadaComCabecote(){}
+void getDadosListaEncadeadaComCabecote(No *inicio, int vetorAux[]){
+    int i=0;
+
+    No *node = inicio->prox;
+    while(node != NULL){
+        vetorAux[i] = node->num;
+        node = node->prox;
+        i++;
+    }
+}
+
+void destruirListaEncadeadaComCabecote(No **inicio){
+
+    No *node = *inicio;
+    node = node->prox;
+
+    while(node != NULL){
+        
+    }
+}
 
 void show_selected(int x){
 
