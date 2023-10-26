@@ -1,5 +1,5 @@
 /*
-    gcc mainTeste.c EstruturaVetores.c -o teste
+    gcc mainTeste.c EstruturaVetores.c -o mainTeste
 */
 #include <stdio.h>
 #include <stdlib.h>
